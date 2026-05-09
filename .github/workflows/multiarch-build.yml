@@ -83,15 +83,17 @@ jobs:
         run: |
           ARCH="${{ steps.arch.outputs.tag }}"
           docker run --rm --platform "${{ matrix.platform }}" \
-            "stellar-k8s-test:${ARCH}" /stellar-operator version
+            "stellar-k8s-test:${ARCH}" version
           echo "✓ stellar-operator boots on ${{ matrix.platform }}"
 
           docker run --rm --platform "${{ matrix.platform }}" \
-            "stellar-k8s-test:${ARCH}" /stellar-fork-detector --help
+            --entrypoint /stellar-fork-detector \
+            "stellar-k8s-test:${ARCH}" --help
           echo "✓ stellar-fork-detector boots on ${{ matrix.platform }}"
 
           docker run --rm --platform "${{ matrix.platform }}" \
-            "stellar-k8s-test:${ARCH}" /stellar-watcher --help
+            --entrypoint /stellar-watcher \
+            "stellar-k8s-test:${ARCH}" --help
           echo "✓ stellar-watcher boots on ${{ matrix.platform }}"
 
   # ── Publish combined multi-arch manifest (main push only) ─────────────────

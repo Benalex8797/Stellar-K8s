@@ -3515,7 +3515,6 @@ fn extract_peers_from_config(node: &StellarNode) -> Vec<String> {
     if let Some(known_peers_toml) = &config.known_peers {
         match known_peers_toml.parse::<toml::Value>() {
             Ok(value) => {
-                println!("KNOWN_PEERS successfully parsed: {:?}", value);
                 if let Some(kp_array) = value.as_array() {
                     for v in kp_array {
                         if let Some(s) = v.as_str() {
@@ -3531,11 +3530,9 @@ fn extract_peers_from_config(node: &StellarNode) -> Vec<String> {
                             peers.push(peer.to_string());
                         }
                     }
-                } else {
-                    println!("KNOWN_PEERS matched Ok, but no array or KNOWN_PEERS key found");
                 }
             }
-            Err(e) => println!("KNOWN_PEERS parse error: {}", e),
+            Err(_) => {} // Silently skip unparseable KNOWN_PEERS
         }
     }
 
@@ -3543,7 +3540,6 @@ fn extract_peers_from_config(node: &StellarNode) -> Vec<String> {
     if let Some(qs_toml) = &config.quorum_set {
         match qs_toml.parse::<toml::Value>() {
             Ok(value) => {
-                println!("QUORUM_SET successfully parsed: {:?}", value);
                 // Check for [VALIDATORS] section with IP-like keys
                 if let Some(validators) = value.get("VALIDATORS").and_then(|v| v.as_table()) {
                     for key in validators.keys() {
@@ -3552,15 +3548,12 @@ fn extract_peers_from_config(node: &StellarNode) -> Vec<String> {
                             peers.push(key.clone());
                         }
                     }
-                } else {
-                    println!("QUORUM_SET matched Ok, but no VALIDATORS table found");
                 }
             }
-            Err(e) => println!("QUORUM_SET parse error: {}", e),
+            Err(_) => {} // Silently skip unparseable QUORUM_SET
         }
     }
 
-    println!("Extracted peers: {:?}", peers);
     peers.sort();
     peers.dedup();
     peers

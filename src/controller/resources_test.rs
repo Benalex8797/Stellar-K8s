@@ -785,7 +785,6 @@ peer-2 = "G..."
         };
 
         let netpol = build_network_policy(&node, &config);
-        println!("netpol = {:?}", netpol);
         let spec = netpol.spec.expect("spec must be present");
 
         assert!(spec
